@@ -1,0 +1,38 @@
+{% extends 'predictions/base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-lg p-4 rounded-4">
+            <h2 class="mb-4 text-center text-primary">Loan Prediction</h2>
+
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                <div class="col-md-6">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field|add_class:"form-control" }}
+                    
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    
+                    {% for error in field.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                
+                <div class="col-12 text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        Predict Default
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+{% endblock %}

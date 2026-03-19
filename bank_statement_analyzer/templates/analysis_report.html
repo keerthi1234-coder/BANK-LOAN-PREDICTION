@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bank Statement Analysis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .transactions-table {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            max-height: 300px;
+            /* Adjust height for 10 rows */
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            border-top: none;
+        }
+
+        .table th,
+        .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .category-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .amount-positive {
+            color: #28a745;
+        }
+
+        .amount-negative {
+            color: #dc3545;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        /* // ... existing styles ... */
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-chart-line me-2"></i>Bank Statement Analysis</h1>
+            <p class="mb-0">Analysis Report for Recent Transactions</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stat-value">
+                        {{ symbol }}{{ "%.2f"|format(overall_transaction.Credit)}}
+                    </div>
+                    <div class="stat-label">
+                        <i class="fas fa-arrow-up text-success me-1"></i>Total Credits
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stat-value">
+                        {{ symbol }}{{ "%.2f"|format(overall_transaction.Debit) }}
+                    </div>
+                    <div class="stat-label">
+                        <i class="fas fa-arrow-down text-danger me-1"></i>Total Debits
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stat-value">
+                        {{ transactions|length }}
+                    </div>
+                    <div class="stat-label">
+                        <i class="fas fa-exchange-alt text-primary me-1"></i>Total Transactions
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stat-value">
+                        {{ symbol }}{{ "%.2f"|format(overall_transaction.Balance) }}
+                    </div>
+                    <div class="stat-label">
+                        <i class="fas fa-wallet text-info me-1"></i>Current Balance
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="transactions-table">
+            <h3 class="mb-4"><i class="fas fa-list me-2"></i>Recent Transactions</h3>
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Balance</th>
+                            <th>Category</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.Date.strftime('%d-%b-%Y') }}</td>
+                            <td>{{ transaction.Description }}</td>
+                            <td class="amount-negative">
+                                {% if transaction.Debit > 0 %}
+                                {{ symbol }}{{ "%.2f"|format(transaction.Debit) }}
+                                {% endif %}
+                            </td>
+                            <td class="amount-positive">
+                                {% if transaction.Credit > 0 %}
+                                {{ symbol }}{{ "%.2f"|format(transaction.Credit) }}
+                                {% endif %}
+                            </td>
+                            <!-- <td>{{ symbol }}{{ "%.2f"|format(transaction.Balance) }}</td> -->
+                            <td>
+                                {% if transaction.Balance != transaction.Balance %}
+                                <!-- If Balance is NaN, display an empty value -->
+                                &nbsp;
+                                {% else %}
+                                {{ symbol }}{{ "%.2f"|format(transaction.Balance) }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="category-badge badge 
+                                    {% if transaction.Category == 'Income' %}bg-success
+                                    {% elif transaction.Category == 'Loan Payment' %}bg-danger
+                                    {% elif transaction.Category == 'Shopping' %}bg-primary
+                                    {% elif transaction.Category == 'Utility' %}bg-warning
+                                    {% else %}bg-secondary
+                                    {% endif %}">
+                                    {{ transaction.Category }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Add this after the transactions-table div and before the loan-analysis div -->
+        <div class="transactions-table mb-4" style="padding-bottom: 50px;">
+            <h3 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Graphical Representations</h3>
+            <div class="row">
+                <!-- line Chart -->
+                <div class="col-md-12">
+                    <div class="chart-container">
+                        <div id="balance-trend-chart"></div>
+                    </div>
+                </div>
+                <!-- Bar Chart -->
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <div id="barGraph" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <!-- pie Chart -->
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <div id="pieChart" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loan Eligibility Analysis -->
+        <div class="loan-analysis mb-4">
+            <h3 class="mb-4"><i class="fas fa-chart-pie me-2"></i>Loan Eligibility Analysis</h3>
+
+            <!-- Monthly Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stat-value">{{ symbol }}{{ "%.2f"|format(eligibility['Average Monthly Income']) }}
+                        </div>
+                        <div class="stat-label">Average Monthly Income</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stat-value">{{ symbol }}{{ "%.2f"|format(eligibility['Average Monthly Expenses']) }}
+                        </div>
+                        <div class="stat-label">Average Monthly Expenses</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stat-value">{{ symbol }}{{ "%.2f"|format(eligibility['Net Cash Flow']) }}</div>
+                        <div class="stat-label">Net Cash Flow</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stat-value">{{ symbol }}{{ "%.2f"|format(eligibility['Regular Payment Commitments'])
+                            }}</div>
+                        <div class="stat-label">Regular Payment Commitments</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Assessment -->
+            <div class="risk-assessment p-4 bg-white rounded">
+                <h4 class="mb-3">Risk Assessment</h4>
+                <div class="row">
+                    {% for factor, risk in eligibility['Risk Factors'].items() %}
+                    <div class="col-md-3 mb-3">
+                        <div class="risk-factor p-3 border rounded">
+                            <h5>{{ factor }}</h5>
+                            <span class="badge {% if risk == 'High' %}bg-danger
+                                             {% elif risk == 'Medium' %}bg-warning
+                                             {% elif risk == 'Low' %}bg-success
+                                             {% elif risk == 'Good' %}bg-success
+                                             {% elif risk == 'Risky' %}bg-danger
+                                             {% else %}bg-success{% endif %}">
+                                {{ risk }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Eligibility Score -->
+                <div class="mt-4">
+                    <h4>Loan Eligibility Score: {{ eligibility['Eligibility Score'] }}/100</h4>
+                    <div class="alert 
+                        {% if eligibility['Eligibility Score'] > 50 %}alert-success
+                        {% else %}alert-danger{% endif %} mt-3">
+                        <strong>{{ eligibility['Recommendation'] }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download Button -->
+        <div class="text-center mb-4">
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="fas fa-download me-2"></i>Download Full Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        const chartData = {{ chart_data | tojson }};
+        const barGraphData = {{ bar_graph | tojson }};
+        Plotly.newPlot('barGraph', barGraphData.data, barGraphData.layout);
+        // const lineGraphData = {{ line_graph | tojson }};
+        // Plotly.newPlot('lineGraph', lineGraphData.data, lineGraphData.layout);
+        // console.log('Chart Data:', chartData);
+        const pieChartData = {{ pie_chart | tojson }};
+        Plotly.newPlot('pieChart', pieChartData.data, pieChartData.layout);
+        const balanceTrend = chartData.balance_trend;
+        const financialMetrics = chartData.financial_metrics;
+        const balanceTrendChart = {
+            x: balanceTrend.labels,
+            y: balanceTrend.values,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Balance Trend',
+            line: { color: 'royalblue', width: 2 }
+        };
+
+        const layout = {
+            title: 'Balance Trends',
+            xaxis: { title: 'Date' },
+            yaxis: { title: 'Balance' }
+        };
+
+        Plotly.newPlot('balance-trend-chart', [balanceTrendChart], layout);
+    </script>
+</body>
+
+</html>

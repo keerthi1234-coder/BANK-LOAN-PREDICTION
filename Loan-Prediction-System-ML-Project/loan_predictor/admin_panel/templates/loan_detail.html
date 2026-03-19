@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Loan Application Details</h2>
+
+<div class="card shadow-lg p-4 rounded-4">
+    <!-- User Details -->
+    <h4 class="mb-3">User Details</h4>
+    <table class="table table-bordered">
+        <tr><th>Username</th><td>{{ loan.user.username }}</td></tr>
+        <tr><th>Email</th><td>{{ loan.user.email }}</td></tr>
+        <tr><th>First Name</th><td>{{ loan.user.first_name }}</td></tr>
+        <tr><th>Last Name</th><td>{{ loan.user.last_name }}</td></tr>
+        <tr><th>Date Joined</th><td>{{ loan.user.date_joined }}</td></tr>
+    </table>
+
+    <!-- Loan Details -->
+    <h4 class="mt-4 mb-3">Loan Details</h4>
+    <table class="table table-bordered">
+        <tr><th>Amount</th><td>₹{{ loan.loan_amount }}</td></tr>
+        <tr><th>Tenure</th><td>{{ loan.loan_tenure }} months</td></tr>
+        <tr><th>Purpose</th><td>{{ loan.loan_purpose }}</td></tr>
+        <tr><th>Status</th><td>{{ loan.status }}</td></tr>
+        <tr><th>Applied At</th><td>{{ loan.applied_at }}</td></tr>
+        <tr><th>Remark</th><td>{{ loan.remark|default:"-" }}</td></tr>
+    </table>
+
+    <!-- Prediction Details -->
+    <h4 class="mt-4 mb-3">Prediction Details</h4>
+    <table class="table table-bordered">
+        {% if loan.prediction %}
+            <tr>
+                <th>Prediction Result</th>
+                <td>
+                    {% if loan.prediction.predicted_default %}
+                        <span class="badge bg-danger">Defaulter</span>
+                    {% else %}
+                        <span class="badge bg-success">Non-defaulter</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr><th>Probability</th><td>{{ loan.prediction.probability|default:"N/A" }}</td></tr>
+            <tr><th>Created At</th><td>{{ loan.prediction.created_at }}</td></tr>
+        {% else %}
+            <tr><td colspan="2" class="text-muted">No prediction available</td></tr>
+        {% endif %}
+    </table>
+    
+
+    <!-- Status Update Form -->
+    {% if loan.status == "Pending" %}
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                   
+                    <option value="Approved" {% if loan.status == "Approved" %}selected{% endif %}>Approved</option>
+                    <option value="Rejected" {% if loan.status == "Rejected" %}selected{% endif %}>Rejected</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Remark</label>
+                <textarea name="remark" class="form-control" rows="3">{{ loan.remark }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-save"></i> Update
+            </button>
+            <a href="{% url 'admin_loan_list' %}" class="btn btn-link ms-2">← Back</a>
+        </form>
+    {% else %}
+        <a href="{% url 'admin_loan_list' %}" class="btn btn-link ms-2">← Back</a>
+    {% endif %}
+</div>
+{% endblock %}

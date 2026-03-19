@@ -1,0 +1,46 @@
+{% extends 'predictions/base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Loan Application History</h2>
+
+<div class="card shadow-lg p-4 rounded-4">
+    {% if loans %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Loan ID</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Tenure</th>
+                    <th>Status</th>
+                    <th>Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in loans %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ loan.id }}</td>
+                    <td>{{ loan.applied_at }}</td>
+                    <td>₹{{ loan.loan_amount }}</td>
+                    <td>{{ loan.loan_tenure }} months</td>
+                    <td>
+                        {% if loan.status == "Approved" %}
+                            <span class="badge bg-success">{{ loan.status }}</span>
+                        {% elif loan.status == "Rejected" %}
+                            <span class="badge bg-danger">{{ loan.status }}</span>
+                        {% else %}
+                            <span class="badge bg-warning">{{ loan.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ loan.remark|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted">No loan applications found.</p>
+    {% endif %}
+</div>
+{% endblock %}

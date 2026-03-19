@@ -1,0 +1,7 @@
+flask
+numpy
+pandas
+PyPDF2
+tabula-py
+pdfminer.six
+plotly

@@ -1,0 +1,29 @@
+{% extends 'predictions/base.html' %}
+{% block content %}
+<h2 class="mb-4">Apply for Loan</h2>
+
+<div class="card shadow-lg p-4 rounded-4">
+    {% if already_applied %}
+        <div class="alert alert-info">You have already applied for a loan with this prediction.</div>
+    {% elif success %}
+        <div class="alert alert-success">Loan application submitted successfully for ₹{{ loan_amount }}!</div>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Loan Amount</label>
+                <input type="number" name="loan_amount" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tenure (Months)</label>
+                <input type="number" name="loan_tenure" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Purpose</label>
+                <textarea name="loan_purpose" class="form-control" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Submit Application</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

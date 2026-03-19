@@ -1,0 +1,19 @@
+#1. Deactivate current virtual environment (if activated)
+deactivate
+
+# 2. Delete the old virtual environment folder
+rm -rf venv
+
+# 3. Create new virtual environment
+python -m venv venv
+
+# 4. Activate the new virtual environment
+source venv/Scripts/activate
+
+# 5. Install the required packages
+pip install -r requirements.txt
+
+pip install pandas==2.2.2
+pip install numpy==1.26.4 
+
+python app.py

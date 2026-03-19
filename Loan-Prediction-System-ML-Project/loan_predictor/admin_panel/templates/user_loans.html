@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Loans Applied by {{ user.username }}</h2>
+
+<div class="card shadow-lg p-4 rounded-4">
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Amount (₹)</th>
+                <th>Tenure</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Applied At</th>
+                <th>Prediction</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loan in loans %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>₹{{ loan.loan_amount }}</td>
+                <td>{{ loan.loan_tenure }} months</td>
+                <td>{{ loan.loan_purpose }}</td>
+                <td>
+                    {% if loan.status == "Approved" %}
+                        <span class="badge bg-success">{{ loan.status }}</span>
+                    {% elif loan.status == "Rejected" %}
+                        <span class="badge bg-danger">{{ loan.status }}</span>
+                    {% else %}
+                        <span class="badge bg-warning">{{ loan.status }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ loan.applied_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                    {% if loan.prediction %}
+                        {% if loan.prediction.predicted_default %}
+                            <span class="badge bg-danger">Defaulter</span>
+                        {% else %}
+                            <span class="badge bg-success">Non-defaulter</span>
+                        {% endif %}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No loans found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="mt-3">
+        <a href="{% url 'user_list' %}" class="btn btn-link">← Back to Users</a>
+    </div>
+</div>
+{% endblock %}

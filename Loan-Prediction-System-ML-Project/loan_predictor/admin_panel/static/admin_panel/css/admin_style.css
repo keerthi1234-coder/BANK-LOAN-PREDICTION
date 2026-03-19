@@ -1,0 +1,40 @@
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+.sidebar .nav-link {
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+.sidebar .nav-link:hover {
+    background-color: #495057;
+    text-decoration: none;
+}
+
+/* Cards */
+.card {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Table */
+.table thead {
+    background-color: #343a40;
+    color: #fff;
+}
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0b5ed7;
+}

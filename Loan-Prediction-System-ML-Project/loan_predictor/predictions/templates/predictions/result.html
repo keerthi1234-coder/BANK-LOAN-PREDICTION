@@ -1,0 +1,48 @@
+{% extends 'predictions/base.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg rounded-4 p-4">
+            <h2 class="text-center text-primary mb-4">Prediction Result</h2>
+
+            <table class="table table-bordered">
+                <tr>
+                    <th>Applicant</th>
+                    <td>{{ application.user.get_full_name|default:application.user.username }}</td>
+                </tr>
+                <tr>
+                    <th>Probability of Default</th>
+                    <td>{{ prediction.probability|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <th>Predicted Status</th>
+                    <td>
+                        {% if prediction.predicted_default %}
+                            <span class="badge bg-danger fs-6">Defaulter</span>
+                        {% else %}
+                            <span class="badge bg-success fs-6">Non-defaulter</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+
+            <div class="text-center mt-4">
+               {% if not prediction.predicted_default %}
+    {% if prediction.loanapplicationformdata_set.exists %}
+        <span class="text-muted">Already Applied</span>
+    {% else %}
+       <a href="{% url 'apply_loan' %}?prediction={{ p.prediction.id }}" class="btn btn-success">
+Apply Loan
+</a>
+    {% endif %}
+{% endif %}
+                <a href="{% url 'predict' %}" class="btn btn-outline-primary btn-lg px-4 ms-2">
+                    Try Another Prediction
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

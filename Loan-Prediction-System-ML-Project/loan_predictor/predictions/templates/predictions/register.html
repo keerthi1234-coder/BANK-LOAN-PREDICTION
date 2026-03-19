@@ -1,0 +1,85 @@
+{% extends 'predictions/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg p-4 rounded-4">
+            <h2 class="mb-4 text-center text-primary">Create Account</h2>
+{% if form.errors %}
+<div class="alert alert-danger">
+    <ul>
+        {% for field in form %}
+            {% for error in field.errors %}
+                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- First Name -->
+                <div class="mb-3">
+                    <label class="form-label">First Name</label>
+                    {{ form.first_name|add_class:"form-control" }}
+                </div>
+
+                <!-- Last Name -->
+                <div class="mb-3">
+                    <label class="form-label">Last Name</label>
+                    {{ form.last_name|add_class:"form-control" }}
+                </div>
+
+                <!-- Username -->
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    {{ form.username|add_class:"form-control" }}
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    {{ form.email|add_class:"form-control" }}
+                </div>
+
+                <!-- Mobile Number -->
+                <div class="mb-3">
+                    <label class="form-label">Mobile Number</label>
+                    {{ form.mobile_number|add_class:"form-control" }}
+                </div>
+
+                <!-- Address -->
+                <div class="mb-3">
+                    <label class="form-label">Address</label>
+                    {{ form.address|add_class:"form-control" }}
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    {{ form.password1|add_class:"form-control" }}
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-3">
+                    <label class="form-label">Confirm Password</label>
+                    {{ form.password2|add_class:"form-control" }}
+                </div>
+
+                <!-- Submit -->
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">Register</button>
+                </div>
+            </form>
+
+            <div class="text-center mt-3">
+                <small>Already have an account? <a href="{% url 'login' %}">Login here</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

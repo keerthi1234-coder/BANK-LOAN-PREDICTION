@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Loan Predictions</h2>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>S.No</th>
+            <th>Prediction ID</th>
+            <th>User</th>
+            <th>Loan Amount</th>
+            <th>Income</th>
+            <th>Property Area</th>
+            <th>Prediction</th>
+            <th>Probability</th>
+            <th>Model</th>
+            <th>Created At</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for app in applications %}
+        <tr>
+           <td>{{ forloop.counter }}</td>
+            <td>{{ app.id }}</td>
+            <td>{{ app.user.username }}</td>
+            <td>{{ app.loan_amount }}</td>
+            <td>{{ app.applicant_income }}</td>
+            <td>{{ app.property_area }}</td>
+            <td>
+                {% if app.prediction %}
+                    {% if app.prediction.predicted_default %}
+                        <span class="badge bg-danger">Default</span>
+                    {% else %}
+                        <span class="badge bg-success">Safe</span>
+                    {% endif %}
+                {% else %}
+                    <span class="badge bg-secondary">Not Predicted</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if app.prediction %}
+                    {{ app.prediction.probability|floatformat:2 }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>{{ app.prediction.model_version|default:"-" }}</td>
+            <td>{{ app.prediction.created_at|date:"Y-m-d H:i" }}</td>
+            <td>
+                {% if app.prediction %}
+                    <a href="{% url 'delete_prediction' app.id %}" class="btn btn-sm btn-danger"
+                       onclick="return confirm('Are you sure you want to delete this prediction?');">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                    
+                {% else %}
+                    <span class="text-muted">-</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

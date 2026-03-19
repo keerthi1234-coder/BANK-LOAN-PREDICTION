@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Loan Applications</h2>
+<table class="table table-hover table-bordered shadow-sm">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Loan ID</th>
+            <th>User</th>
+            <th>Amount (₹)</th>
+            <th>Tenure</th>
+            <th>Status</th>
+            <th>Applied At</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for loan in loans %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ loan.id }}</td>
+            <td>{{ loan.user.username }}</td>
+            <td>{{ loan.loan_amount }}</td>
+            <td>{{ loan.loan_tenure }} months</td>
+            <td>
+                {% if loan.status == 'Approved' %}
+                    <span class="badge bg-success">{{ loan.status }}</span>
+                {% elif loan.status == 'Rejected' %}
+                    <span class="badge bg-danger">{{ loan.status }}</span>
+                {% else %}
+                    <span class="badge bg-warning">{{ loan.status }}</span>
+                {% endif %}
+            </td>
+            <td>{{ loan.applied_at }}</td>
+            <td>
+                <a href="{% url 'admin_loan_detail' loan.id %}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-eye"></i> View
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+<div class="row g-4">
+    <!-- Total Loans -->
+    <div class="col-md-3">
+        <a href="{% url 'admin_loan_list' %}" class="text-decoration-none">
+            <div class="card text-white bg-primary text-center">
+                <div class="card-body">
+                    <i class="bi bi-people-fill fs-2 mb-2"></i>
+                    <h5>Total Loans</h5>
+                    <h3>{{ total_loans }}</h3>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Pending -->
+    <div class="col-md-3">
+        <a href="{% url 'admin_loan_list' %}?status=Pending" class="text-decoration-none">
+            <div class="card text-white bg-warning text-center">
+                <div class="card-body">
+                    <i class="bi bi-hourglass-split fs-2 mb-2"></i>
+                    <h5>Pending</h5>
+                    <h3>{{ pending }}</h3>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Approved -->
+    <div class="col-md-3">
+        <a href="{% url 'admin_loan_list' %}?status=Approved" class="text-decoration-none">
+            <div class="card text-white bg-success text-center">
+                <div class="card-body">
+                    <i class="bi bi-check-circle fs-2 mb-2"></i>
+                    <h5>Approved</h5>
+                    <h3>{{ approved }}</h3>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Rejected -->
+    <div class="col-md-3">
+        <a href="{% url 'admin_loan_list' %}?status=Rejected" class="text-decoration-none">
+            <div class="card text-white bg-danger text-center">
+                <div class="card-body">
+                    <i class="bi bi-x-circle fs-2 mb-2"></i>
+                    <h5>Rejected</h5>
+                    <h3>{{ rejected }}</h3>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

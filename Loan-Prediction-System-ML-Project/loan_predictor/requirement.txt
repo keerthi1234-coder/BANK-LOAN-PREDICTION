@@ -1,0 +1,20 @@
+# pip install django pandas numpy scikit-learn matplotlib seaborn joblib openpyxl
+# pip install django pandas numpy scikit-learn joblib
+ pip install pandas==1.5.3  
+ pip install numpy==2.4.2
+# python manage.py migrate
+# python manage.py shell
+testing 1: from app.models import Loan
+Loan.objects.all()
+2:from app.models import Loan
+Loan.objects.count()
+# python manage.py shell
+1. from django.contrib.auth.models import User
+   User.objects.all()
+2. exit()
+#python manage.py createsuperuser
+Username: admin
+Email address: admin@example.com
+Password:
+Password (again):
+#python manage.py runserver

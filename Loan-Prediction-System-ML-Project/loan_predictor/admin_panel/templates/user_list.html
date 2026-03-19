@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Registered Users</h2>
+
+<div class="card shadow-lg p-4 rounded-4">
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Date Joined</th>
+                <th>Staff / Admin</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.date_joined|date:"Y-m-d H:i" }}</td>
+                <td>
+                    {% if user.is_superuser %}
+                        <span class="badge bg-danger">Admin</span>
+                    {% elif user.is_staff %}
+                        <span class="badge bg-warning">Staff</span>
+                    {% else %}
+                        <span class="badge bg-secondary">User</span>
+                    {% endif %}
+                </td>
+               <td>
+    <!-- View Profile -->
+    <a href="{% url 'admin_user_profile' user.id %}" class="btn btn-info btn-sm mb-1">
+        <i class="bi bi-person-circle"></i> View Profile
+    </a>
+
+    <!-- View Applied Loans -->
+    <a href="{% url 'admin_user_loans' user.id %}" class="btn btn-primary btn-sm mb-1">
+        <i class="bi bi-card-checklist"></i> View Loans
+    </a>
+    <a href="{% url 'admin_user_predictions' user.id %}" class="btn btn-primary btn-sm mb-1">
+        <i class="bi bi-card-checklist"></i> View Predictions
+    </a>
+
+    <!-- Delete User -->
+    <a href="{% url 'admin_delete_user' user.id %}" class="btn btn-danger btn-sm mb-1" onclick="return confirm('Are you sure you want to delete this user?');">
+        <i class="bi bi-trash"></i> Delete
+    </a>
+</td>
+
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No users found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
